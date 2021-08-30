@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.input.KeyCodeCombination?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.bananasmoothii.bulkymltranslator.StartController">
+    <top>
+        <MenuBar>
+            <Menu>
+                <text>File</text>
+                <MenuItem onAction="#open" text="Open">
+               <accelerator>
+                  <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+               </accelerator></MenuItem>
+            <Menu fx:id="fileEncoding" mnemonicParsing="false" text="File Encoding (UTF-8)" />
+            </Menu>
+         <Menu mnemonicParsing="false" text="Keywords">
+           <items>
+             <MenuItem mnemonicParsing="false" onAction="#keywords" text="Edit Keywords">
+                  <accelerator>
+                     <KeyCodeCombination alt="UP" code="K" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                  </accelerator></MenuItem>
+               <MenuItem mnemonicParsing="false" onAction="#keywordsHelp" text="Help" />
+           </items>
+         </Menu>
+        </MenuBar>
+    </top>
+    <center>
+        <VBox alignment="TOP_CENTER" spacing="10.0">
+            <Label text="Bulk YML Translator 1.0 by Bananasmoothii">
+                <font>
+                    <Font name="System Bold" size="18.0" />
+                </font>
+            </Label>
+         <Button mnemonicParsing="false" onAction="#open" prefWidth="62.0" text="Start" />
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+        </VBox>
+    </center>
+</BorderPane>
