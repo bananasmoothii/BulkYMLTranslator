@@ -1,38 +1,71 @@
 package fr.bananasmoothii.bulkymltranslator;
 
-import javafx.event.ActionEvent;
-import javafx.event.Event;
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Dialog;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Menu;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class StartController extends MainReference {
 
     public ToggleGroup fileEncodingToggleGroup = new ToggleGroup();
     public Menu fileEncoding;
+    public BorderPane start;
+    public BorderPane blacklists;
+    public ChoiceBox<TranslationNode.Language> translateFrom;
+    public ChoiceBox<TranslationNode.Language> translateTo;
 
     @FXML
     protected void open() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setInitialDirectory(new File("."));
-        directoryChooser.showDialog(main.getWindow());
+        File directory = directoryChooser.showDialog(main.getWindow());
+        if (directory == null) return;
+
+        main.project = new Project(directory, main);
+
+        slide(start, blacklists);
+    }
+
+    protected static void slide(@NotNull Region from, @NotNull Region to) {
+        double width = from.getScene().getWidth();
+        to.setTranslateX(width);
+        to.setVisible(true);
+        Timeline timeline1 = new Timeline();
+        Timeline timeline2 = new Timeline();
+        KeyValue kv1 = new KeyValue(from.translateXProperty(), -width, Interpolator.EASE_BOTH);
+        KeyValue kv2 = new KeyValue(to.translateXProperty(), 0, Interpolator.EASE_BOTH);
+        KeyFrame kf1 = new KeyFrame(Duration.millis(500d), kv1);
+        KeyFrame kf2 = new KeyFrame(Duration.millis(500d), kv2);
+        timeline1.getKeyFrames().add(kf1);
+        timeline2.getKeyFrames().add(kf2);
+        timeline1.setOnFinished(event -> from.setVisible(false));
+        timeline1.play();
+        timeline2.play();
     }
 
     @FXML
     protected void keywords() throws IOException {
+        if (main.project == null) {
+            new BetterAlert(Alert.AlertType.WARNING, main.getWindow(), "Please start or open a project before using keywords").show();
+            return;
+        }
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("keywords.fxml"));
         Stage keywordsStage = new Stage();
         keywordsStage.setScene(new Scene(fxmlLoader.load()));
@@ -41,7 +74,7 @@ public class StartController extends MainReference {
         keywordsStage.show();
         ((KeywordsController) fxmlLoader.getController()).replaceField.requestFocus();
         VBox list = ((KeywordsController) fxmlLoader.getController()).list;
-        for (Main.Keyword keyword : main.keywords) {
+        for (Keyword keyword : main.project.config.keywords) {
             list.getChildren().add(keyword.getDisplay());
         }
     }

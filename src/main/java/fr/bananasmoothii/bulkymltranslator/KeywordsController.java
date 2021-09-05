@@ -22,12 +22,12 @@ public class KeywordsController extends MainReference {
 
     @FXML
     protected void addKeyword() {
-        for (Main.Keyword keyword : main.keywords) {
+        for (Keyword keyword : main.project.config.keywords) {
             if (keyword.replaceFrom.toString().equals(useRegex.isSelected() ?
                     replaceField.getText() :
                     Pattern.quote(replaceField.getText()))) {
                 ButtonType showMeThat = new ButtonType("Show me that");
-                Optional<ButtonType> buttonType = new Alert(Alert.AlertType.ERROR, "This keyword already exists",
+                Optional<ButtonType> buttonType = new BetterAlert(Alert.AlertType.ERROR, main.getWindow(), "This keyword already exists",
                         showMeThat, new ButtonType("Oh sure, I forgot")).showAndWait();
                 if (buttonType.isPresent() && buttonType.get() == showMeThat) {
                     keyword.getReplaceField().requestFocus();
@@ -36,13 +36,13 @@ public class KeywordsController extends MainReference {
             }
         }
         try {
-            Main.Keyword keyword = new Main.Keyword(replaceField.getText(), byField.getText(), useRegex.isSelected());
-            main.keywords.add(keyword);
+            Keyword keyword = new Keyword(replaceField.getText(), byField.getText(), useRegex.isSelected());
+            main.project.config.keywords.add(keyword);
             list.getChildren().add(keyword.getDisplay());
             replaceField.setText("");
             byField.setText("");
         } catch (PatternSyntaxException e) {
-            new Alert(Alert.AlertType.ERROR, "Invalid Regex").show();
+            new BetterAlert(Alert.AlertType.ERROR, main.getWindow(), "Invalid Regex").show();
         }
     }
 

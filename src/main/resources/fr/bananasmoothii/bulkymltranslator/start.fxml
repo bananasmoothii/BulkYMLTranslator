@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.input.KeyCodeCombination?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-
-<BorderPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.bananasmoothii.bulkymltranslator.StartController">
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<BorderPane prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.bananasmoothii.bulkymltranslator.StartController">
     <top>
         <MenuBar>
             <Menu>
@@ -21,6 +15,7 @@
                   <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                </accelerator></MenuItem>
             <Menu fx:id="fileEncoding" mnemonicParsing="false" text="File Encoding (UTF-8)" />
+            <MenuItem mnemonicParsing="false" text="Translations" />
             </Menu>
          <Menu mnemonicParsing="false" text="Keywords">
            <items>
@@ -34,16 +29,82 @@
         </MenuBar>
     </top>
     <center>
-        <VBox alignment="TOP_CENTER" spacing="10.0">
-            <Label text="Bulk YML Translator 1.0 by Bananasmoothii">
-                <font>
-                    <Font name="System Bold" size="18.0" />
-                </font>
-            </Label>
-         <Button mnemonicParsing="false" onAction="#open" prefWidth="62.0" text="Start" />
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
-        </VBox>
+      <StackPane>
+         <children>
+            <BorderPane visible="false">
+               <top>
+                  <Label text="Step 2 - Translations (you can change it later)" BorderPane.alignment="TOP_LEFT">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <BorderPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </BorderPane.margin>
+                  </Label>
+               </top>
+               <center>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Label text="Translate from ">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Label>
+                        <ChoiceBox fx:id="translateFrom" prefWidth="150.0" />
+                        <Label text=" to ">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Label>
+                        <ChoiceBox fx:id="translateTo" prefWidth="150.0" />
+                     </children>
+                  </HBox>
+               </center>
+            </BorderPane>
+            <BorderPane fx:id="blacklists" visible="false">
+               <top>
+                  <Label text="Step 1 - Whitelists / Blacklists (you won't be able to change it later!)" BorderPane.alignment="TOP_LEFT">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <BorderPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </BorderPane.margin>
+                  </Label>
+               </top>
+               <center>
+                  <HBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
+                     <children>
+                        <VBox>
+                           <children>
+                              <TreeView prefHeight="10000.0" prefWidth="10000.0" />
+                              <CheckBox mnemonicParsing="false" text="Use as Whitelist" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </center>
+               <bottom>
+                  <Label text="In &quot;Files&quot;" BorderPane.alignment="BOTTOM_CENTER" />
+               </bottom>
+            </BorderPane>
+            <BorderPane fx:id="start">
+               <center>
+                  <Button mnemonicParsing="false" onAction="#open" text="Start">
+                     <font>
+                        <Font size="17.0" />
+                     </font>
+                  </Button>
+               </center>
+               <top>
+                     <Label text="Bulk YML Translator 1.0 by Bananasmoothii" textAlignment="CENTER" BorderPane.alignment="CENTER">
+                         <font>
+                             <Font name="System Bold" size="20.0" />
+                         </font>
+                     </Label>
+               </top>
+            </BorderPane>
+         </children>
+      </StackPane>
     </center>
 </BorderPane>

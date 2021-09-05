@@ -3,27 +3,21 @@ package fr.bananasmoothii.bulkymltranslator;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.text.Font;
+import javafx.scene.control.RadioMenuItem;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 public class Main extends Application {
 
     private Stage primaryStage;
     private Window window;
-    protected Charset fileEncoding;
+    protected @Nullable Project project;
     protected StartController startController;
-    public List<Keyword> keywords = new ArrayList<>();
+    protected String preferredFileEncoding;
 
     @Override
     public void start(Stage primaryStage) throws IOException {
@@ -39,8 +33,13 @@ public class Main extends Application {
             if (encoding.equals("UTF-8")) item.setSelected(true);
             item.setUserData(encoding);
             item.setOnAction(event -> {
-                fileEncoding = Charset.forName(((String) startController.fileEncodingToggleGroup.getSelectedToggle().getUserData()));
-                startController.fileEncoding.setText("File Encoding (" + fileEncoding.name() + ')');
+                String newEncoding = (String) startController.fileEncodingToggleGroup.getSelectedToggle().getUserData();
+                if (! Charset.isSupported(newEncoding)) throw new IllegalArgumentException("Invalid file encoding: " + newEncoding);
+                preferredFileEncoding = newEncoding;
+                startController.fileEncoding.setText("File Encoding (" + preferredFileEncoding + ')');
+                if (project != null) {
+                    project.config.fileEncoding = preferredFileEncoding;
+                }
             });
         }
         window = scene.getWindow();
@@ -59,73 +58,5 @@ public class Main extends Application {
 
     public Window getWindow() {
         return window;
-    }
-
-    public static class Keyword {
-        public Pattern replaceFrom;
-        public String replaceTo;
-
-        private @Nullable TextField replaceField;
-        private @Nullable TextField byField;
-
-        public Keyword(Pattern replaceFrom, String replaceTo) {
-            this.replaceFrom = replaceFrom;
-            this.replaceTo = replaceTo;
-        }
-
-        public Keyword(String replaceFrom, String replaceTo, boolean useRegex) throws PatternSyntaxException {
-            this(useRegex ? Pattern.compile(replaceFrom) : Pattern.compile(Pattern.quote(replaceFrom)), replaceTo);
-        }
-
-        public FlowPane getDisplay() {
-            FlowPane flowPane = new FlowPane();
-
-            replaceField = new TextField();
-            replaceField.setPromptText("Replace...");
-            replaceField.setText(replaceFrom.toString());
-            replaceField.setOnKeyTyped(event -> {
-                replaceFrom = Pattern.compile(replaceField.getText());
-                System.out.println("New replace: " + replaceField.getText());
-            });
-            flowPane.getChildren().add(replaceField);
-
-            Label label = new Label(" ➡️ ");
-            label.setFont(new Font(16d));
-            flowPane.getChildren().add(label);
-
-            byField = new TextField();
-            byField.setPromptText("By...");
-            byField.setText(replaceTo);
-            byField.setOnKeyTyped(event -> {
-                replaceTo = byField.getText();
-                System.out.println("New by: " + byField.getText());
-            });
-
-            flowPane.getChildren().add(byField);
-            return flowPane;
-        }
-
-        public @Nullable TextField getReplaceField() {
-            return replaceField;
-        }
-
-        public @Nullable TextField getByField() {
-            return byField;
-        }
-    }
-
-    public Charset getFileEncoding() {
-        return fileEncoding;
-    }
-
-    public void setFileEncoding(Charset fileEncoding) {
-        this.fileEncoding = fileEncoding;
-        if (! startController.fileEncodingToggleGroup.getSelectedToggle().getUserData().equals(fileEncoding.name())) {
-            for (Toggle toggle : startController.fileEncodingToggleGroup.getToggles()) {
-                if (toggle.getUserData().equals(fileEncoding.name()))
-                    toggle.setSelected(true);
-            }
-        }
-        startController.fileEncoding.setText("File Encoding (" + fileEncoding.name() + ')');
     }
 }
